@@ -1,0 +1,3 @@
+The gold list in data/gold.json comes from https://prirucka.ujc.cas.cz/?id=100, fetched on 2026-11-02.
+The page itself isn't redistributed here. To rebuild the gold list, save it as data/source/ujc_ijp_id100.html and run
+python -I src/gold.py. The page may have changed since then.

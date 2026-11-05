@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N vyjm-einfra
+#PBS -l select=1:ncpus=1:mem=2gb:scratch_local=1gb
+#PBS -l walltime=12:00:00
+#PBS -m a
+#PBS -o /storage/plzen1/home/kasnezde/projects/vyjmenovana-slova/logs/
+#PBS -e /storage/plzen1/home/kasnezde/projects/vyjmenovana-slova/logs/
+# All e-INFRA settings, 5 runs each. Network-bound (one CPU idles); appends one small JSON line per finished
+# request straight to results/raw/, so a killed job loses nothing and a resubmit resumes.
+#   qsub jobs/einfra.pbs            # or: qsub -v SETTINGS="kimi-k3.1-pro/*",PARALLEL=1 jobs/einfra.pbs (the key allows 4 in total)
+PROJ=/storage/plzen1/home/kasnezde/projects/vyjmenovana-slova
+PY=/storage/plzen1/home/kasnezde/virtualenv/vllm/bin/python
+SETTINGS=${SETTINGS:-"kimi-k3.1-pro/* deepseek-v4.1-flash/* gpt-oss-120b/* qwen3.8-flash-next/* qwen3.8-27b/* gemma-4-31b/*"}
+trap 'clean_scratch' EXIT TERM
+export TMPDIR=$SCRATCHDIR
+cd "$PROJ"
+echo "host $(hostname) job $PBS_JOBID start $(date +%T)"
+$PY -I src/run.py --settings $SETTINGS --parallel ${PARALLEL:-3} --out results/raw
+echo "end $(date +%T)"

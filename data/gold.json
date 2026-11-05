@@ -1,0 +1,1017 @@
+{
+ "source": "https://prirucka.ujc.cas.cz/?id=100",
+ "fetched": "2026-11-02",
+ "letters": {
+  "b": {
+   "items": [
+    {
+     "lemma": "být",
+     "variants": [
+      "být"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "obyčej",
+     "variants": [
+      "obyčej"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "bystrý",
+     "variants": [
+      "bystrý"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "bylina",
+     "variants": [
+      "bylina"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "kobyla",
+     "variants": [
+      "kobyla"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "býk",
+     "variants": [
+      "býk"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "babyka",
+     "variants": [
+      "babyka"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "Bydžov",
+     "variants": [
+      "Bydžov"
+     ],
+     "kind": "name"
+    },
+    {
+     "lemma": "Přibyslav",
+     "variants": [
+      "Přibyslav"
+     ],
+     "kind": "name"
+    },
+    {
+     "lemma": "Bylany",
+     "variants": [
+      "Bylany"
+     ],
+     "kind": "name"
+    },
+    {
+     "lemma": "Hrabyně",
+     "variants": [
+      "Hrabyně"
+     ],
+     "kind": "name"
+    },
+    {
+     "lemma": "Zbyněk",
+     "variants": [
+      "Zbyněk"
+     ],
+     "kind": "name"
+    }
+   ],
+   "derived": [
+    "Bystrc",
+    "Bystřice",
+    "Kobylisy",
+    "aby",
+    "abych",
+    "abys",
+    "by",
+    "bych",
+    "bychom",
+    "bydlet",
+    "bydlit",
+    "bydliště",
+    "bydlo",
+    "bys",
+    "byste",
+    "bystrost",
+    "bystře",
+    "bystřina",
+    "byt",
+    "bytelný",
+    "bytná",
+    "bytost",
+    "bytový",
+    "bytí",
+    "býkovec",
+    "býložravec",
+    "býlí",
+    "bývalý",
+    "bývat",
+    "býček",
+    "býčí",
+    "dobytek",
+    "dobytkářství",
+    "dobytče",
+    "dobyvatel",
+    "dobýt",
+    "kdyby",
+    "kdybych",
+    "kdybys",
+    "kobylka",
+    "nabýt",
+    "nabývat",
+    "neodbytný",
+    "nábytek",
+    "obydlí",
+    "obyvatel",
+    "obyvatelstvo",
+    "obyčejný",
+    "obývat",
+    "odbyt",
+    "odbýt",
+    "pozbýt",
+    "přebytek",
+    "přebýt",
+    "přebývat",
+    "přibýt",
+    "přibývat",
+    "příbytek",
+    "ubýt",
+    "ubývat",
+    "zabývat",
+    "zbytek",
+    "zbývat",
+    "zlatobýl",
+    "úbytek",
+    "černobýl",
+    "živobytí"
+   ]
+  },
+  "l": {
+   "items": [
+    {
+     "lemma": "slyšet",
+     "variants": [
+      "slyšet"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "mlýn",
+     "variants": [
+      "mlýn"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "blýskat",
+     "variants": [
+      "blýskat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "polykat",
+     "variants": [
+      "polykat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "vzlykat",
+     "variants": [
+      "vzlykat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "plynout",
+     "variants": [
+      "plynout"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "plýtvat",
+     "variants": [
+      "plýtvat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "lysý",
+     "variants": [
+      "lysý"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "lýtko",
+     "variants": [
+      "lýtko"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "lýko",
+     "variants": [
+      "lýko"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "lyže",
+     "variants": [
+      "lyže"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pelyněk",
+     "variants": [
+      "pelyněk"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "plyš",
+     "variants": [
+      "plyš"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "slynout",
+     "variants": [
+      "slynout"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "plytký",
+     "variants": [
+      "plytký"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "vlys",
+     "variants": [
+      "vlys"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "Volyně",
+     "variants": [
+      "Volyně"
+     ],
+     "kind": "name"
+    }
+   ],
+   "derived": [
+    "Lysolaje",
+    "Lysá",
+    "blyštět",
+    "blýskavice",
+    "blýskavý",
+    "blýsknout",
+    "lysina",
+    "lyska",
+    "lyžař",
+    "lyžovat",
+    "lýkovec",
+    "lýkožrout",
+    "lýčený",
+    "lýčí",
+    "mlynář",
+    "mlýnice",
+    "nedoslýchavý",
+    "oplývat",
+    "plyn",
+    "plynný",
+    "plynojem",
+    "plynoměr",
+    "plynulý",
+    "plynárna",
+    "rozplynout",
+    "rozplývat",
+    "slyšitelný",
+    "slýchat",
+    "splynout",
+    "splývat",
+    "uplynout",
+    "vlysový",
+    "vlýsek",
+    "vyplývat",
+    "vzlyk",
+    "vzlyknout",
+    "vzlykot",
+    "zablýsknout",
+    "zalykat"
+   ]
+  },
+  "m": {
+   "items": [
+    {
+     "lemma": "my",
+     "variants": [
+      "my"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "mýt",
+     "variants": [
+      "mýt"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "myslit",
+     "variants": [
+      "myslit",
+      "myslet"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "mýlit",
+     "variants": [
+      "mýlit"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "hmyz",
+     "variants": [
+      "hmyz"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "myš",
+     "variants": [
+      "myš"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "hlemýžď",
+     "variants": [
+      "hlemýžď"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "mýtit",
+     "variants": [
+      "mýtit"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "zamykat",
+     "variants": [
+      "zamykat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "smýkat",
+     "variants": [
+      "smýkat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "dmýchat",
+     "variants": [
+      "dmýchat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "chmýří",
+     "variants": [
+      "chmýří"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "nachomýtnout",
+     "variants": [
+      "nachomýtnout"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "mýto",
+     "variants": [
+      "mýto"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "mykat",
+     "variants": [
+      "mykat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "mys",
+     "variants": [
+      "mys"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "sumýš",
+     "variants": [
+      "sumýš"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "Litomyšl",
+     "variants": [
+      "Litomyšl"
+     ],
+     "kind": "name"
+    },
+    {
+     "lemma": "Kamýk",
+     "variants": [
+      "Kamýk"
+     ],
+     "kind": "name"
+    }
+   ],
+   "derived": [
+    "Mýto",
+    "Nezamysl",
+    "Nezamyslice",
+    "Přemysl",
+    "dmychadlo",
+    "dmýchadlo",
+    "hmyzožravec",
+    "hmyzí",
+    "mycí",
+    "mydlina",
+    "mydlit",
+    "mydlář",
+    "mykaný",
+    "mylný",
+    "mysl",
+    "myslivec",
+    "myslivna",
+    "myčka",
+    "myšina",
+    "myšlenka",
+    "myší",
+    "mýdlo",
+    "mýlka",
+    "mýtina",
+    "mýtné",
+    "mýval",
+    "nedomykat",
+    "nesmyslný",
+    "ochomýtat",
+    "odmykat",
+    "omyl",
+    "pomyje",
+    "pomyslet",
+    "pomyslit",
+    "pomýšlet",
+    "průmysl",
+    "průsmyk",
+    "přemýšlet",
+    "přimykat",
+    "rozdmýchat",
+    "smyk",
+    "smysl",
+    "smyslný",
+    "smyčec",
+    "smyčka",
+    "smyšlenka",
+    "smýčit",
+    "smýšlení",
+    "umyvadlo",
+    "umyvárna",
+    "umýt",
+    "umývadlo",
+    "umývat",
+    "umývárna",
+    "usmyslet",
+    "usmyslit",
+    "vymycovat",
+    "vymykat",
+    "vymyslet",
+    "vymyslit",
+    "vymýtit",
+    "vymýšlet",
+    "výmyk",
+    "výmysl",
+    "zmýlená",
+    "úmysl"
+   ]
+  },
+  "p": {
+   "items": [
+    {
+     "lemma": "pýcha",
+     "variants": [
+      "pýcha"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pytel",
+     "variants": [
+      "pytel"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pysk",
+     "variants": [
+      "pysk"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "netopýr",
+     "variants": [
+      "netopýr"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "slepýš",
+     "variants": [
+      "slepýš"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pyl",
+     "variants": [
+      "pyl"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "kopyto",
+     "variants": [
+      "kopyto"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "klopýtat",
+     "variants": [
+      "klopýtat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "třpytit",
+     "variants": [
+      "třpytit"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "zpytovat",
+     "variants": [
+      "zpytovat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pykat",
+     "variants": [
+      "pykat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pýr",
+     "variants": [
+      "pýr"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pýří",
+     "variants": [
+      "pýří"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pýřit",
+     "variants": [
+      "pýřit"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "pyj",
+     "variants": [
+      "pyj"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "Chropyně",
+     "variants": [
+      "Chropyně"
+     ],
+     "kind": "name"
+    },
+    {
+     "lemma": "Pyšely",
+     "variants": [
+      "Pyšely"
+     ],
+     "kind": "name"
+    },
+    {
+     "lemma": "Spytihněv",
+     "variants": [
+      "Spytihněv"
+     ],
+     "kind": "name"
+    }
+   ],
+   "derived": [
+    "Přepychy",
+    "Solopysky",
+    "jazykozpyt",
+    "klopýtnout",
+    "nevyzpytatelný",
+    "odpykat",
+    "opylovat",
+    "ptakopysk",
+    "pych",
+    "pyskatý",
+    "pytlačit",
+    "pytlovina",
+    "pytlák",
+    "pyšnit",
+    "pyšný",
+    "pýchavka",
+    "pýřavka",
+    "pýřivý",
+    "přepych",
+    "sudokopytník",
+    "třpyt",
+    "třpytivý",
+    "třpytka",
+    "zapýřit",
+    "zpychnout",
+    "čepýřit"
+   ]
+  },
+  "s": {
+   "items": [
+    {
+     "lemma": "syn",
+     "variants": [
+      "syn"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "sytý",
+     "variants": [
+      "sytý"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "sýr",
+     "variants": [
+      "sýr"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "syrový",
+     "variants": [
+      "syrový"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "syrý",
+     "variants": [
+      "syrý"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "sychravý",
+     "variants": [
+      "sychravý"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "usychat",
+     "variants": [
+      "usychat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "sýkora",
+     "variants": [
+      "sýkora"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "sýček",
+     "variants": [
+      "sýček"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "sysel",
+     "variants": [
+      "sysel"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "syčet",
+     "variants": [
+      "syčet"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "sypat",
+     "variants": [
+      "sypat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "Bosyně",
+     "variants": [
+      "Bosyně"
+     ],
+     "kind": "name"
+    }
+   ],
+   "derived": [
+    "Sychrov",
+    "Syneč",
+    "Sýrovice",
+    "dosyta",
+    "nasypat",
+    "nasytit",
+    "nenasytný",
+    "násyp",
+    "násypný",
+    "osypaný",
+    "sykat",
+    "sykot",
+    "synovec",
+    "synovský",
+    "sypek",
+    "sypký",
+    "syreček",
+    "syrovinka",
+    "syrovátka",
+    "sytost",
+    "sýkořice",
+    "sýpka",
+    "sýrař",
+    "sýrárna",
+    "vysychat",
+    "vysypat",
+    "zasypat",
+    "zlosyn",
+    "zásyp"
+   ]
+  },
+  "v": {
+   "items": [
+    {
+     "lemma": "vy",
+     "variants": [
+      "vy"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "vykat",
+     "variants": [
+      "vykat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "vysoký",
+     "variants": [
+      "vysoký"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "výt",
+     "variants": [
+      "výt"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "výskat",
+     "variants": [
+      "výskat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "zvykat",
+     "variants": [
+      "zvykat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "žvýkat",
+     "variants": [
+      "žvýkat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "vydra",
+     "variants": [
+      "vydra"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "výr",
+     "variants": [
+      "výr"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "vyžle",
+     "variants": [
+      "vyžle"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "povyk",
+     "variants": [
+      "povyk"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "výheň",
+     "variants": [
+      "výheň"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "cavyky",
+     "variants": [
+      "cavyky"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "vyza",
+     "variants": [
+      "vyza"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "Vyškov",
+     "variants": [
+      "Vyškov"
+     ],
+     "kind": "name"
+    },
+    {
+     "lemma": "Výtoň",
+     "variants": [
+      "Výtoň"
+     ],
+     "kind": "name"
+    }
+   ],
+   "derived": [
+    "Povydří",
+    "Vysočany",
+    "Vyšehrad",
+    "Vyžlovka",
+    "navykat",
+    "navyknout",
+    "návyk",
+    "obvyklý",
+    "odvykat",
+    "odvyknout",
+    "povykovat",
+    "povýšit",
+    "převyšovat",
+    "přežvykovat",
+    "přežvýkavec",
+    "vydrovka",
+    "vydří",
+    "vysočina",
+    "vyvařit",
+    "vyvýšenina",
+    "vyvýšit",
+    "vyšší",
+    "výborný",
+    "výskot",
+    "výslech",
+    "výzkumný",
+    "výše",
+    "výšina",
+    "výška",
+    "zavýsknout",
+    "zavýt",
+    "zlozvyk",
+    "zvyk",
+    "zvyklost",
+    "zvyknout",
+    "zvýšit",
+    "žvýkací",
+    "žvýkačka"
+   ]
+  },
+  "z": {
+   "items": [
+    {
+     "lemma": "brzy",
+     "variants": [
+      "brzy"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "jazyk",
+     "variants": [
+      "jazyk"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "nazývat",
+     "variants": [
+      "nazývat"
+     ],
+     "kind": "common"
+    },
+    {
+     "lemma": "Ruzyně",
+     "variants": [
+      "Ruzyně"
+     ],
+     "kind": "name"
+    }
+   ],
+   "derived": [
+    "dvojjazyčný",
+    "jazykověda",
+    "jazykozpyt",
+    "jazylka",
+    "jazýček",
+    "ozývat",
+    "se",
+    "vyzývat",
+    "vyzývavý",
+    "vzývat"
+   ]
+  }
+ }
+}

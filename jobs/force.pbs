@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N vyjm-force
+#PBS -l select=1:ncpus=1:mem=4gb:scratch_local=1gb
+#PBS -l walltime=8:00:00
+#PBS -m a
+#PBS -o /storage/plzen1/home/kasnezde/projects/vyjmenovana-slova/logs/
+#PBS -e /storage/plzen1/home/kasnezde/projects/vyjmenovana-slova/logs/
+# Forced answers (src/force_answer.py) for the e-INFRA reasoning-on settings whose first phase stops at the 32k cap.
+#   qsub -W depend=afterany:<einfra job> jobs/force.pbs
+PROJ=/storage/plzen1/home/kasnezde/projects/vyjmenovana-slova
+PY=/storage/plzen1/home/kasnezde/virtualenv/vllm/bin/python
+SETTINGS=${SETTINGS:-"gpt-oss-120b/on qwen3.8-flash-next/on qwen3.8-27b/on gemma-4-31b/on"}
+trap 'clean_scratch' EXIT TERM
+export TMPDIR=$SCRATCHDIR
+export HF_HOME=/storage/plzen1/home/kasnezde/.cache/huggingface HF_HUB_DISABLE_PROGRESS_BARS=1   # tokenizer files only
+cd "$PROJ"
+echo "host $(hostname) job $PBS_JOBID start $(date +%T)"
+$PY -I src/force_answer.py --settings $SETTINGS --parallel ${PARALLEL:-3}
+echo "end $(date +%T)"

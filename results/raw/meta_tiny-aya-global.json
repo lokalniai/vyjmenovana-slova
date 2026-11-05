@@ -1,0 +1,1 @@
+{"model": "tiny-aya-global", "repo": "CohereLabs/tiny-aya-global", "startup_s": 1222, "versions": "vllm 0.31.0;torch 2.13.0;transformers 5.17.0", "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, 610.57.04", "host": "grogu3.cerit-sc.cz"}

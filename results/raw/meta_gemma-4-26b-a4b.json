@@ -1,0 +1,1 @@
+{"model": "gemma-4-26b-a4b", "repo": "RedHatAI/gemma-4-26B-A4B-it-FP8-dynamic", "startup_s": 1193, "versions": "vllm 0.31.0;torch 2.13.0;transformers 5.17.0", "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, 610.57.04", "host": "grogu3.cerit-sc.cz"}

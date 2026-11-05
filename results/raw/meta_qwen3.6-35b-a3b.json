@@ -1,0 +1,1 @@
+{"model": "qwen3.6-35b-a3b", "repo": "Qwen/Qwen3.6-35B-A3B-FP8", "startup_s": 1408, "versions": "vllm 0.31.0;torch 2.13.0;transformers 5.17.0", "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, 610.57.04", "host": "grogu3.cerit-sc.cz"}

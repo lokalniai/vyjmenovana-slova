@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.claude/
+.venv
+logs/
+results/pilot/
+results/pilot_scores/
+results/raw/vllm_*.log
+results/superseded/**/*_before_replacement.md
+data/source/*.html
+*.tmp

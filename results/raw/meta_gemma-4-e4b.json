@@ -1,0 +1,1 @@
+{"model": "gemma-4-e4b", "repo": "google/gemma-4-E4B-it", "startup_s": 922, "versions": "vllm 0.31.0;torch 2.13.0;transformers 5.17.0", "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, 610.57.04", "host": "grogu3.cerit-sc.cz"}

@@ -1,0 +1,66 @@
+#!/bin/bash
+#PBS -N vyjm-local
+#PBS -l select=1:ncpus=8:ngpus=1:mem=64gb:scratch_local=150gb:gpu_mem=80gb:gpu_cap=compute_89
+#PBS -l walltime=6:00:00
+#PBS -m a
+#PBS -o /storage/plzen1/home/kasnezde/projects/vyjmenovana-slova/logs/
+#PBS -e /storage/plzen1/home/kasnezde/projects/vyjmenovana-slova/logs/
+# The four models e-INFRA does not serve, in FP8 with vLLM 0.31.0 (see src/settings.py: LOCAL).
+#   qsub jobs/local.pbs                                   # all four, 5 runs per setting
+#   qsub -v MODELS="gemma-4-e4b",RUNS=1,OUT=results/pilot_local jobs/local.pbs
+# Reasoning-on runs use vLLM's thinking_token_budget (32k) + 16k for the answer, so max_model_len 64k is enough.
+# gpu_mem=80gb: Qwen3.6-35B-A3B FP8 is 37.5 GB of weights, plus KV for 5 parallel 48k-token traces.
+# gpu_cap=compute_89: native FP8 (L40S/H100/Blackwell). Weights are downloaded into scratch.
+
+PROJ=/storage/plzen1/home/kasnezde/projects/vyjmenovana-slova
+PY=/storage/plzen1/home/kasnezde/virtualenv/vllm/bin/python
+MODELS=${MODELS:-"qwen3.6-35b-a3b gemma-4-26b-a4b gemma-4-e4b tiny-aya-global"}
+RUNS=${RUNS:-5}
+OUT=${OUT:-results/raw}
+
+trap 'kill $SERVER 2>/dev/null; clean_scratch' EXIT TERM
+test -n "$SCRATCHDIR" || { echo >&2 "no scratch"; exit 1; }
+export TMPDIR=$SCRATCHDIR
+export HF_HOME=/storage/plzen1/home/kasnezde/.cache/huggingface   # token lives here
+export HF_HUB_CACHE=$SCRATCHDIR/hf_hub                            # weights stay off the home quota
+export XDG_CACHE_HOME=$SCRATCHDIR/cache VLLM_CACHE_ROOT=$SCRATCHDIR/vllm_cache
+export TRITON_CACHE_DIR=$SCRATCHDIR/triton TORCHINDUCTOR_CACHE_DIR=$SCRATCHDIR/inductor
+export FLASHINFER_WORKSPACE_BASE=$SCRATCHDIR/flashinfer
+export TOKENIZERS_PARALLELISM=false VLLM_NO_USAGE_STATS=1 HF_HUB_DISABLE_PROGRESS_BARS=1
+export PATH=$(dirname $PY):$PATH
+
+cp -r "$PROJ/src" "$SCRATCHDIR/" || { echo >&2 "input copy failed"; exit 2; }
+cd "$SCRATCHDIR"
+mkdir -p out
+cp "$PROJ/$OUT"/*.jsonl out/ 2>/dev/null   # resume: finished seeds are skipped
+nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv | tee gpu.txt
+echo "host $(hostname) job $PBS_JOBID"
+
+PORT=$($PY -c 'import socket; s=socket.socket(); s.bind(("",0)); print(s.getsockname()[1])')
+status=0
+for m in $MODELS; do
+  read -r REPO MAXLEN ARGS < <($PY -I -c "
+import sys; sys.path.insert(0, 'src'); from settings import LOCAL
+c = LOCAL['$m']; print(c['repo'], c.get('max_model_len', 65536), ' '.join(c['args']))")
+  echo "== $m: $REPO max_model_len=$MAXLEN $ARGS ($(date +%T))"
+  t0=$(date +%s)
+  vllm serve "$REPO" --served-model-name "$m" --port $PORT --max-model-len $MAXLEN \
+      --gpu-memory-utilization 0.90 --max-num-seqs 8 --seed 0 $ARGS > "out/vllm_$m.log" 2>&1 &
+  SERVER=$!
+  until curl -sf localhost:$PORT/v1/models | grep -q "\"$m\""; do
+    kill -0 $SERVER 2>/dev/null || { echo >&2 "vllm for $m died"; tail -30 "out/vllm_$m.log" >&2; status=1; continue 2; }
+    sleep 10
+  done
+  echo "server up in $(( $(date +%s) - t0 ))s"
+  pip_list=$($PY -c 'import importlib.metadata as m; print(";".join(f"{p} {m.version(p)}" for p in ("vllm", "torch", "transformers")))')
+  echo "{\"model\": \"$m\", \"repo\": \"$REPO\", \"startup_s\": $(( $(date +%s) - t0 )), \"versions\": \"$pip_list\", \"gpu\": \"$(tail -1 gpu.txt)\", \"host\": \"$(hostname)\"}" > "out/meta_$m.json"
+  $PY -I src/run.py --settings "$m/*" --runs $RUNS --out out --base-url http://localhost:$PORT/v1 \
+      --parallel 5 --max-model-len $MAXLEN || status=1
+  # safety net for the 32k reasoning cap: runs that still passed it (or whose answer was cut) get a forced answer
+  $PY -I src/force_answer.py --settings "$m/on" --raw out --base-url http://localhost:$PORT/v1 --parallel 5 || status=1
+  kill $SERVER; wait $SERVER 2>/dev/null
+  mkdir -p "$PROJ/$OUT" && cp out/*"$m"* "$PROJ/$OUT/" \
+    || { trap - EXIT; echo >&2 "copy-back failed for $m, scratch kept on $(hostname)"; exit 3; }
+  rm -rf "$HF_HUB_CACHE"
+done
+exit $status
