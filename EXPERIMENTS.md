@@ -52,11 +52,30 @@ within **16,000 tokens** (`settings.REASONING_CAP`, `ANSWER_BUDGET`). There are 
   with the native budget on all 5 seeds. Re-running only the runs that went over 32k would have biased the
   sample.
 
-## Extra results for reference (`results/external/`)
+## Closed and hosted models via OpenRouter (added 2026-11-09)
 
-Two answers retrieved by hand, from Claude Opus 5.5 (high reasoning) and from the unidentified model behind the
-ChatGPT web interface, with "Nehledej nic na internetu." appended to the prompt. One run each and no usage data. They are
-scored the same way (`score.load_external`) but shown separately and are not part of the comparison.
+| model | OpenRouter slug | modes |
+|---|---|---|
+| GPT-6.1 Terra | `openai/gpt-6.1-terra` | off, on |
+| Claude Opus 5.5 | `anthropic/claude-opus-5.5` | off, on |
+| Gemini 4 Argon | `google/gemini-4-argon` | off, on |
+| Mistral Large 4 | `mistralai/mistral-large-4-0` | off, on |
+| Muse Spark Open | `meta/muse-spark-open` | off, on |
+
+- Same prompt, no system prompt, default sampling, same scoring. **One run per setting** (seed 0, passed on where the
+  provider supports `seed`; `settings.OPENROUTER_RUNS`) to save cost, so there is no spread for these models. They replace the two hand-retrieved answers (Claude Opus 5.5 and ChatGPT web, one run each, with
+  "Nehledej nic na internetu." appended), which are no longer used.
+- **No web access.** OpenRouter only searches the web for a `:online` slug, the `web` plugin or the web-search server
+  tool. None of them is ever sent (no `plugins`, no `tools`). `run.py` refuses `:online` slugs and rejects any answer
+  that comes back with `url_citation` annotations.
+- **Reasoning** uses OpenRouter's unified `reasoning` parameter: `effort: "high"` (on) or `effort: "none"` (off). A
+  model whose reasoning is mandatory rejects `none`; that reasoning-off setting is then dropped. The 32k cap can't be
+  forced on closed APIs (no raw completions to continue the cut reasoning), so an "on" request gets `max_tokens` = 48k
+  in total. A run that spends it all on reasoning has no answer and scores 0. Reasoning-off answers get 16k.
+- **One attempt per run.** No retries, and a failed run is recorded and never redrawn on a resubmit. The exceptions are
+  requests that OpenRouter rejected before any model saw them (401/402/429); those are marked `not_attempted` and filled
+  on a resubmit. The key is checked before anything is sent. Each record keeps the provider that served it and the cost.
+- Key: `~/.config/openrouter_key` on plzen1 (one line, `chmod 600`), or `$OPENROUTER_API_KEY`.
 
 ## Prompt (`settings.PROMPT`)
 
@@ -98,7 +117,9 @@ The result is in `data/gold.json`. The page itself isn't redistributed; see `dat
   resubmit.
 - Local: `qsub jobs/local.pbs`. One GPU with ≥ 80 GB and `compute_89` (native FP8), vLLM 0.31.0, weights
   downloaded to scratch, 5 parallel streams per model.
+- OpenRouter: `qsub jobs/openrouter.pbs`. Streams, 5 parallel requests.
 - Forced answers: `qsub jobs/force.pbs` for e-INFRA (after the first phase); the local job runs them right after each
   model's first phase, as a safety net.
 - Score: `python -I src/score.py` → `results/scores.csv`, `results/summary.md`.
-- Viewer: `python -I src/build_site.py` → `docs/index.html`, in the lokalni.ai companion-page style. One-chart summary: `python -I src/build_simple.py` → `docs/summary.html`.
+- Viewer: `python -I src/build_site.py` → `docs/index.html`, a one-screen dashboard in the lokalni.ai companion-page style
+  (headline numbers and five cards that expand to full screen; stacked on narrow screens). One-chart summary: `python -I src/build_simple.py` → `docs/summary.html`.

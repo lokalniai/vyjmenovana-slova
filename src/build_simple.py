@@ -12,9 +12,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from build_site import CSS, FONTS, JS, LEGEND, MOON, SOURCE, SUN, THEME_BOOT, TITLE, collect, esc, external_section, fmt_tok, metric_panel, model_order  # noqa: E402
+from build_site import CSS, FONTS, JS, LEGEND, MOON, SOURCE, SUN, THEME_BOOT, TITLE, collect, esc, fmt_tok, is_closed, metric_panel, model_order  # noqa: E402
 from score import Gold  # noqa: E402
-from settings import MODELS, REASONING_CAP, RUNS, SETTINGS  # noqa: E402
+from settings import ANSWER_BUDGET, MODELS, OPENROUTER_RUNS, REASONING_CAP, RUNS, SETTINGS  # noqa: E402
 
 ROOT = HERE.parent
 EXTRA_CSS = """
@@ -35,7 +35,7 @@ def table(agg: dict) -> str:
         forced = "–" if on is None else f"{on['forced']}/{on['n']}"
         no_json = sum(a["parse_fail"] for a in (off, on) if a)
         n = sum(a["n"] for a in (off, on) if a)
-        rows.append(f"<tr><td>{esc(MODELS[m][0])}</td>"
+        rows.append(f"<tr{' class=closed' if is_closed(m) else ''}><td>{esc(MODELS[m][0])}</td>"
                     f"<td class=num>{num(off, 'f1')}</td><td class=num>{num(on, 'f1')}</td>"
                     f"<td class=num>{num(on, 'recall')}</td><td class=num>{num(on, 'precision')}</td>"
                     f"<td class=num>{num(on, 'precision_lenient')}</td>"
@@ -56,10 +56,10 @@ def build(D: dict, gold: Gold) -> str:
     status = ""
     if partial or missing:
         status = (f"<div class=cav><b>Incomplete.</b> {len(D['runs'])} runs so far; {len(partial)} setting(s) have fewer "
-                  f"than {RUNS} runs (dimmed){', ' + str(len(missing)) + ' have none yet' if missing else ''}.</div>")
-    line = f"Among them, <b class=nb>{esc(MODELS[best.split('/')[0]][0])}</b> leads with F1 {agg[best]['f1']:.2f} with reasoning {best.split('/')[1]}"
+                  f"than their runs (dimmed){', ' + str(len(missing)) + ' have none yet' if missing else ''}.</div>")
+    line = f"Among them, <b class=nb>{esc(MODELS[best.split('/')[0]][0])}</b>{' (closed weights)' if is_closed(best) else ''} leads with F1 {agg[best]['f1']:.2f} with reasoning {best.split('/')[1]}"
     if runner:
-        line += (f"; the next best model, <span class=nb>{esc(MODELS[second][0])}</span>, reaches {agg[runner]['f1']:.2f}")
+        line += (f"; the next best model, <span class=nb>{esc(MODELS[second][0])}</span>{' (closed)' if is_closed(second) else ''}, reaches {agg[runner]['f1']:.2f}")
     n_common = sum(i["kind"] == "common" for i in gold.items.values())
     body = f"""
 <div class=simple>
@@ -69,18 +69,18 @@ def build(D: dict, gold: Gold) -> str:
 <span class=mastsep>&frasl;</span><span class=here>{esc(TITLE)}</span><span class=spacer></span>
 <button class=tgl type=button data-theme-toggle aria-label='Switch theme' title='Switch theme'>{SUN}{MOON}</button></header>
 <h1>Do LLMs know the Czech vyjmenovaná slova?</h1>
-<p class=lede>{len(model_order(agg))} open-weight models listed the <i>vyjmenovaná slova</i> as JSON, {RUNS} times each, with
+<p class=lede>{len(model_order(agg))} models listed the <i>vyjmenovaná slova</i> as JSON, {RUNS} times each (the OpenRouter models {"once" if OPENROUTER_RUNS == 1 else f"{OPENROUTER_RUNS} times"}), with
 reasoning off and on. {line}. Lists are scored against the {len(gold.items)} items outside brackets in ÚJČ's
 <a href='{SOURCE}'>Přehled vyjmenovaných slov</a> ({n_common} words and {len(gold.items) - n_common} proper names).</p>
 {status}
 <h2>F1 with reasoning off and on</h2>
-<p class=sub>Mean over {RUNS} runs. Reasoning is capped at {REASONING_CAP // 1000}k tokens, then the model has to answer.</p>
+<p class=sub>Mean over {RUNS} runs (OpenRouter models: {OPENROUTER_RUNS}). Reasoning is capped at {REASONING_CAP // 1000}k tokens, then the model has to answer;
+the OpenRouter models reason at high effort within {(REASONING_CAP + ANSWER_BUDGET) // 1000}k output tokens and can't be cut off at the cap.</p>
 <div class=panel>{LEGEND}{metric_panel(agg, "f1", "F1")}</div>
 <h2>The numbers</h2>
 <p class=sub>Precision counts ÚJČ's bracketed derived words as wrong; lenient precision leaves them out. An answer without
 parseable JSON scores 0. Reasoning tokens are the median with reasoning on.</p>
 <div class=panel>{table(agg)}</div>
-{external_section(gold)}
 <p class=sub>All metrics, recall by letter, every word and every run with its reasoning trace are in the
 <a href='index.html'>full viewer</a>.</p>
 <div class=foot>Computational resources were provided by the e-INFRA CZ project (ID:90254), supported by the Ministry of

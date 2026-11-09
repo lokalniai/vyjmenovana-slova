@@ -1,1 +1,2 @@
 deepseek-v4.1-flash/off runs made without chat_template_kwargs.thinking=false: the bare e-INFRA alias reasons by default (16k reasoning tokens, no answer). Superseded; kept for the record.
+claude-opus-5.5, gemini-4-argon, muse-spark-open, mistral-large-4 /off (OpenRouter, 2026-11-09): reasoning "effort: none" was rejected with 400 before any model ran ("Reasoning is mandatory for this endpoint and cannot be disabled"; Mistral: "reasoning_effort none is not supported"). These models have no reasoning-off setting.

@@ -3,10 +3,11 @@
 Ten open-weight models were asked to list the *vyjmenovaná slova* as JSON, 5 times each, with reasoning off
 and on (reasoning capped at 32k tokens and then a forced answer). The lists are scored against the words outside
 brackets in ÚJČ's *Přehled vyjmenovaných slov* (99 items). The runs were made on 2026-11-02, and Kimi K3.1-Pro's on
-2026-11-05.
+2026-11-05. Five more models (three of them closed) ran once each through OpenRouter on 2026-11-09; they have
+[their own section](#models-via-openrouter-one-run-each), and Gemini 4 Argon beats every open-weight model there.
 Plan and setup: [EXPERIMENTS.md](EXPERIMENTS.md). Every number below comes from `results/summary.md`.
 
-## Results
+## Results (ten open-weight models, 5 runs each)
 
 F1 (mean ± sd over 5 runs). Recall is against all 99 items, precision is strict (bracketed derived words count
 as wrong).
@@ -26,7 +27,7 @@ as wrong).
 
 **Findings**
 
-1. **Only DeepSeek V4.1 Flash knows the list.** With reasoning on it recalls 82 % of the common words and has
+1. **Of these ten, only DeepSeek V4.1 Flash knows the list.** With reasoning on it recalls 82 % of the common words and has
    recall of at least 0.6 for every letter (b, l, m, p, s, v, z). Without reasoning it still gets F1 0.40. Every other
    model is at F1 ≤ 0.30, and six of the ten are near 0.
 2. **Most models don't know what the task is.** Instead of the seven letters b, l, m, p, s, v and z, they
@@ -45,25 +46,46 @@ as wrong).
    runs are ÚJČ's rarer items: *mys, sumýš, syrý, vykat, cavyky, vyza*, and most proper names (*Zbyněk, Volyně,
    Kamýk, Chropyně, Bosyně, Výtoň*).
 5. **The best-known words** across all 90 runs are *být, mýt, pýcha, sýr* (25–28 runs), then *myš, lyže, pytel, syn*
-   (21–23 runs). No setting ever listed *Zbyněk, Volyně, Chropyně, Bosyně, cavyky* or *vyza*.
+   (21–23 runs). None of these 90 runs listed *Zbyněk, Volyně, Chropyně, Bosyně, cavyky* or *vyza* (Gemini 4 Argon,
+   below, lists all of them but *Bosyně*).
 6. **Cost.** DeepSeek-on needs a median of 32k reasoning tokens (about 11 minutes per answer on e-INFRA) for its
    0.76. Kimi K3.1-Pro gets 0.30 from a median of 12.4k.
 
-## Extra results for reference
+## Models via OpenRouter (one run each)
 
-Two closed models, answered by hand, are scored the same way but are not part of the comparison: one run each, with
-"Nehledej nic na internetu." appended to the prompt and no usage data (`results/external/`).
+Three closed models and two open-weight models served by API ran through OpenRouter on 2026-11-09. They used the same
+prompt and scoring, reasoning effort high, no web access and one attempt per run ([EXPERIMENTS.md](EXPERIMENTS.md)).
+There was **one run per setting**, so there's no spread, and DeepSeek's ± 0.06 over 5 runs is a reminder of how far one
+run can move. Only GPT-6.1 Terra accepts reasoning off; the other four reject it ("reasoning is mandatory", Mistral: not
+supported). No answer came back with web citations. Total cost: $0.31.
 
-| model | F1 | recall | precision (lenient) | listed |
-|---|---|---|---|---|
-| Claude Opus 5.5 (high reasoning) | 0.82 | 0.75 | 0.91 (1.00) | 81 |
-| ChatGPT web interface (unidentified model) | 0.82 | 0.76 | 0.89 (1.00) | 84 |
+| model | served by | F1 off | F1 on | recall on | rec. names | precision on (lenient) | reasoning tokens |
+|---|---|---|---|---|---|---|---|
+| **Gemini 4 Argon** | Google AI Studio | – | **0.93** | 0.94 | 12/15 | 0.92 (0.99) | 12.3k |
+| GPT-6.1 Terra | OpenAI | 0.80 | 0.84 | 0.78 | 6/15 | 0.92 (1.00) | 5.9k |
+| Muse Spark Open | BaseTen, FP4 | – | 0.83 | 0.77 | 6/15 | 0.90 (0.97) | 8.0k |
+| Claude Opus 5.5 | Claude Platform on AWS | – | 0.82 | 0.75 | 3/15 | 0.91 (1.00) | 2.5k |
+| Mistral Large 4 | Mistral | – | 0.36 | 0.27 | 0/15 | 0.52 (0.64) | 18.8k |
 
-All their wrong words are ÚJČ's bracketed derived words, the school-list head words among them. They also list
-names that no setting above ever did: *Chropyně* (Claude) and *Volyně* (ChatGPT). A single run can't show how
-stable this is, and the extended prompt rules out a direct comparison with DeepSeek's 0.76.
+1. **Gemini 4 Argon is the best setting overall** (F1 0.93, against DeepSeek-on's 0.76). It misses only 6 of the 99
+   items (*Bosyně, Vyškov, Výtoň, pyj, syrý, vykat*) and lists names and rare items that no open-weight run ever did:
+   *Zbyněk, Volyně, Chropyně, Kamýk, cavyky, vyza, mys, sumýš*.
+2. **GPT-6.1 Terra, Muse Spark Open and Claude Opus 5.5 sit at 0.82–0.84**, above DeepSeek's mean. Their lists are
+   clean: almost every wrong word is a bracketed derived word, mostly the six school-list head words under *být*
+   (lenient precision 0.97–1.00). What separates them from Gemini is recall of the rarer items and the names (3–6 of 15).
+   Terra already reaches 0.80 with reasoning off.
+3. **Mistral Large 4 doesn't know the list** (0.36). It adds a key *r* with *ryba, rychlý, rýč*, puts *kopyto, netopýr,
+   pyl* and *Litomyšl* under the wrong letters, and lists no names, despite the longest reasoning of the five (18.8k).
+4. **No reasoning cap was needed.** These APIs can't be cut off at 32k (they get 48k in total), but none came close: 2.5k
+   (Claude) to 18.8k (Mistral).
+5. Claude Opus 5.5's F1 (0.822) happens to equal the hand-retrieved answer used before.
 
 ## Caveats
+
+- **The OpenRouter models ran once.** Their numbers are single draws and are not comparable in precision to the
+  5-run means above. Their reasoning budget differs too: effort high within 48k output tokens, with no forced cut at
+  32k (no run went past 18.8k). Claude's reasoning text is a summary, and GPT-6.1 Terra's is hidden; only the token
+  counts are reported. Muse Spark Open was served in FP4 by BaseTen, which OpenRouter picked.
 
 - **Gold = the ÚJČ overview, not a school list.** Six school head words (*byt, bydlit, obyvatel, příbytek,
   nábytek, dobytek*) are bracketed derived words of *být* in ÚJČ, so strict precision counts them as wrong.
@@ -114,6 +136,7 @@ python -I src/gold.py                                   # data/gold.json from th
 qsub jobs/einfra.pbs                                    # e-INFRA first phase (all e-INFRA settings)
 qsub jobs/local.pbs                                     # local models, FP8, vLLM 0.31.0, 1 GPU >= 80 GB
 qsub -W depend=afterany:<einfra job> jobs/force.pbs    # forced answers for the "forced" settings
+qsub jobs/openrouter.pbs                                # closed/hosted models via OpenRouter (key in ~/.config/openrouter_key)
 python -I src/score.py                                  # results/scores.csv, results/items.jsonl, results/summary.md
 python -I src/build_site.py                             # docs/index.html
 python -I src/build_simple.py                           # docs/summary.html

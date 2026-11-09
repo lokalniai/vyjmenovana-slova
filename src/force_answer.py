@@ -150,7 +150,8 @@ async def main():
     DRY_RUN = a.dry_run
     from transformers import AutoTokenizer
 
-    names = [s for s in SETTINGS if s.endswith("/on") and any(fnmatch.fnmatch(s, p) for p in a.settings)]
+    names = [s for s in SETTINGS if s.endswith("/on") and SETTINGS[s]["backend"] != "openrouter"   # closed APIs: no raw completions
+             and any(fnmatch.fnmatch(s, p) for p in a.settings)]
     key = "none" if a.base_url else TOKEN_FILE.read_text().strip()
     client = AsyncOpenAI(base_url=a.base_url or EINFRA, api_key=key, timeout=3 * 3600, max_retries=0)
     sem, lock, tasks = asyncio.Semaphore(a.parallel), asyncio.Lock(), []

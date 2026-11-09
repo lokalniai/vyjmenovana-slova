@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from settings import EXTERNAL, EXTERNAL_PROMPT_SUFFIX, REASONING_CAP, SETTINGS  # noqa: E402
+from settings import REASONING_CAP, SETTINGS  # noqa: E402
 
 SLACK = 64   # e-INFRA reports 31,997 reasoning tokens for a run stopped at 32,000; the native budget adds end tokens
 
@@ -34,8 +34,9 @@ def reasoning_tokens(r: dict) -> int | None:
 
 def needs_force(r: dict) -> str | None:
     """Why a reasoning-on run needs a forced answer: "cap" (reasoning reached the cap, or passed it where the budget
-    was not enforced) or "answer" (reasoning ended in time but the answer was cut off); None if it is complete."""
-    if not r["setting"].endswith("/on"):
+    was not enforced) or "answer" (reasoning ended in time but the answer was cut off); None if it is complete.
+    OpenRouter runs (budget "effort") are never forced: a closed API can't continue cut reasoning, so they score as is."""
+    if not r["setting"].endswith("/on") or SETTINGS[r["setting"]].get("budget") == "effort":
         return None
     if (reasoning_tokens(r) or 0) > REASONING_CAP + SLACK or (r["finish_reason"] == "length" and not r["content"].strip()):
         return "cap"
@@ -224,13 +225,6 @@ def load_runs(raw: Path) -> list[dict]:
     return out
 
 
-def load_external(gold: Gold, path: Path = ROOT / "results" / "external") -> list[dict]:
-    """Hand-retrieved answers (<path>/<stem>.json, see settings.EXTERNAL), scored like any run but kept apart from them."""
-    return [{"stem": p.stem, "name": EXTERNAL[p.stem][0], "note": EXTERNAL[p.stem][1],
-             "score": score_run(parse_answer(p.read_text(encoding="utf-8")), gold)}
-            for p in sorted(path.glob("*.json"))]
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--raw", type=Path, default=ROOT / "results" / "raw")
@@ -269,14 +263,6 @@ def main():
                      f"{int(st.median(rt)) if rt else '–'} | {sum(r['forced'] in ('cap', 'answer') for r in R)}"
                      f"{' (+' + str(sum(r['forced'] == 'pending' for r in R)) + ' pending)' if any(r['forced'] == 'pending' for r in R) else ''} | "
                      f"{sum(r['finish_reason'] == 'length' for r in R)} |")
-    ext = sorted(load_external(gold), key=lambda e: -e["score"]["f1"])
-    if ext:
-        lines += ["", "## Extra results for reference", "",
-                  "One hand-retrieved run each, with \"" + EXTERNAL_PROMPT_SUFFIX + "\" appended to the prompt. Not part of the comparison above.", "",
-                  "| model | F1 | precision | prec. lenient | recall | rec. common | rec. names | listed |", "|---|---|---|---|---|---|---|---|"]
-        lines += [f"| {e['name']} ({e['note']}) | {e['score']['f1']:.3f} | {e['score']['precision']:.3f} | "
-                  f"{e['score']['precision_lenient']:.3f} | {e['score']['recall']:.3f} | {e['score']['recall_common']:.3f} | "
-                  f"{e['score']['recall_names']:.3f} | {e['score']['n_listed']} |" for e in ext]
     (a.out / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))
 

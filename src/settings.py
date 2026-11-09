@@ -1,6 +1,7 @@
 """Models, reasoning modes and the prompt. One *setting* = (model, mode); each runs RUNS times (seeds 0..RUNS-1)."""
 
 RUNS = 5
+OPENROUTER_RUNS = 1   # OpenRouter settings run once (seed 0), to save cost
 # Reasoning is capped at REASONING_CAP tokens for every model, then the model must answer within ANSWER_BUDGET.
 # Two ways to get there (`budget` in SETTINGS), both = "end of thinking forced at the cap, then the answer":
 #   "native": vLLM's per-request thinking_token_budget forces the end-of-thinking token inside one generation
@@ -22,8 +23,9 @@ PROMPT = """Vypiš vyjmenovaná slova podle přehledu vyjmenovaných slov v Inte
 - Odpověz pouze JSON objektem. Klíče jsou písmena (malými písmeny), hodnoty jsou seznamy slov pro dané písmeno: {"písmeno": ["slovo", "slovo", ...], ...}. Nic dalšího nepiš."""
 
 EINFRA = "https://llm.ai.e-infra.cz/v1"
+OPENROUTER = "https://openrouter.ai/api/v1"
 
-# backend: "einfra" or "local" (vLLM in the PBS job). `extra` goes into the request body as-is.
+# backend: "einfra", "local" (vLLM in the PBS job) or "openrouter". `extra` goes into the request body as-is.
 # Sampling is never set: every backend uses the checkpoint's generation_config defaults.
 SETTINGS = {
     # e-INFRA
@@ -46,6 +48,19 @@ SETTINGS = {
     "gemma-4-e4b/on":         dict(model="gemma-4-e4b", backend="local", budget="native", extra={"chat_template_kwargs": {"enable_thinking": True}, **NATIVE}),
     "gemma-4-e4b/off":        dict(model="gemma-4-e4b", backend="local", extra={"chat_template_kwargs": {"enable_thinking": False}}),
     "tiny-aya-global/off":    dict(model="tiny-aya-global", backend="local", extra={}),
+    # OpenRouter. Without web access: OpenRouter searches the web only for a ":online" slug, the "web" plugin or the
+    # web-search server tool, and none of them is ever sent (no plugins, no tools). run.py refuses ":online" slugs and
+    # rejects any answer that comes back with url_citation annotations. Reasoning: OpenRouter's unified `reasoning`
+    # parameter, effort "high" (on) or "none" (off). The 32k cap can't be forced on these APIs (budget="effort"): an
+    # "on" request gets max_tokens = 48k in total and whatever the model spends on reasoning within it.
+    # Reasoning off only where the model allows it: Claude Opus 5.5, Gemini 4 Argon and Muse Spark Open answered 400
+    # "Reasoning is mandatory", Mistral Large 4 "reasoning_effort none is not supported" (2026-11-09, results/invalid/).
+    "gpt-6.1-terra/on":       dict(model="openai/gpt-6.1-terra", backend="openrouter", budget="effort", extra={"reasoning": {"effort": "high"}}),
+    "gpt-6.1-terra/off":      dict(model="openai/gpt-6.1-terra", backend="openrouter", extra={"reasoning": {"effort": "none"}}),
+    "claude-opus-5.5/on":     dict(model="anthropic/claude-opus-5.5", backend="openrouter", budget="effort", extra={"reasoning": {"effort": "high"}}),
+    "gemini-4-argon/on":      dict(model="google/gemini-4-argon", backend="openrouter", budget="effort", extra={"reasoning": {"effort": "high"}}),
+    "mistral-large-4/on":     dict(model="mistralai/mistral-large-4-0", backend="openrouter", budget="effort", extra={"reasoning": {"effort": "high"}}),
+    "muse-spark-open/on":     dict(model="meta/muse-spark-open", backend="openrouter", budget="effort", extra={"reasoning": {"effort": "high"}}),
 }
 
 # Local checkpoints. FP8 everywhere: the author's FP8 build when one exists, else RedHat's, else vLLM's
@@ -74,15 +89,17 @@ MODELS = {
     "gemma-4-26b-a4b":     ("Gemma-4-26B-A4B", "RedHatAI/gemma-4-26B-A4B-it-FP8-dynamic", "local vLLM", "FP8"),
     "gemma-4-e4b":         ("Gemma-4-E4B", "google/gemma-4-E4B-it", "local vLLM", "FP8 (on load)"),
     "tiny-aya-global":     ("Tiny Aya Global", "CohereLabs/tiny-aya-global", "local vLLM", "FP8 (on load)"),
+    # checkpoint = the OpenRouter slug; the provider that served each run is in its record (`provider`)
+    "gpt-6.1-terra":       ("GPT-6.1 Terra", "openai/gpt-6.1-terra", "OpenRouter", "closed"),
+    "claude-opus-5.5":     ("Claude Opus 5.5", "anthropic/claude-opus-5.5", "OpenRouter", "closed"),
+    "gemini-4-argon":      ("Gemini 4 Argon", "google/gemini-4-argon", "OpenRouter", "closed"),
+    "mistral-large-4":     ("Mistral Large 4", "mistralai/mistral-large-4-0", "OpenRouter", "as served (Mistral)"),
+    "muse-spark-open":     ("Muse Spark Open", "meta/muse-spark-open", "OpenRouter", "FP4 (BaseTen)"),   # the run of 2026-11-09
 }
 
-# Answers retrieved by hand, shown for reference only and never mixed into the settings above: one run each, closed
-# models, and the prompt had EXTERNAL_PROMPT_SUFFIX appended. <stem in results/external/>: (name, how it was retrieved).
-EXTERNAL_PROMPT_SUFFIX = "Nehledej nic na internetu."
-EXTERNAL = {
-    "claude_opus_5.5_high": ("Claude Opus 5.5", "high reasoning"),
-    "chatgpt_web":          ("ChatGPT web interface", "unidentified model"),
-}
+
+def runs_for(setting: str) -> int:
+    return OPENROUTER_RUNS if SETTINGS[setting]["backend"] == "openrouter" else RUNS
 
 
 def request_max_tokens(setting: str) -> int:

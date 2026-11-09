@@ -1,0 +1,21 @@
+#!/bin/bash
+#PBS -N vyjm-openrouter
+#PBS -l select=1:ncpus=1:mem=2gb:scratch_local=1gb
+#PBS -l walltime=4:00:00
+#PBS -m a
+#PBS -o /storage/plzen1/home/kasnezde/projects/vyjmenovana-slova/logs/
+#PBS -e /storage/plzen1/home/kasnezde/projects/vyjmenovana-slova/logs/
+# All OpenRouter settings, 1 run each (settings.OPENROUTER_RUNS), one attempt per run (a failed run is recorded and not redrawn; only requests
+# OpenRouter rejected before any model saw them, 401/402/429, are filled on a resubmit). Network-bound; appends one
+# JSON line per finished request to results/raw/. The key comes from ~/.config/openrouter_key on plzen1 (chmod 600)
+# and is checked before anything is sent.
+#   qsub jobs/openrouter.pbs        # or: qsub -v SETTINGS="gpt-6.1-terra/*" jobs/openrouter.pbs
+PROJ=/storage/plzen1/home/kasnezde/projects/vyjmenovana-slova
+PY=/storage/plzen1/home/kasnezde/virtualenv/vllm/bin/python
+SETTINGS=${SETTINGS:-"gpt-6.1-terra/* claude-opus-5.5/* gemini-4-argon/* mistral-large-4/* muse-spark-open/*"}
+trap 'clean_scratch' EXIT TERM
+export TMPDIR=$SCRATCHDIR
+cd "$PROJ"
+echo "host $(hostname) job $PBS_JOBID start $(date +%T)"
+$PY -I src/run.py --settings $SETTINGS ${RUNS:+--runs $RUNS} --parallel ${PARALLEL:-5} --out ${OUT:-results/raw}
+echo "end $(date +%T)"
