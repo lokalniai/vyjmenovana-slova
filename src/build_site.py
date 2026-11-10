@@ -135,8 +135,9 @@ def metric_panel(agg: dict, key: str, label: str, hidden: bool = False) -> str:
         d = (vals["on"] - vals["off"]) if vals.get("off") is not None and vals.get("on") is not None else None
         delta = (("0.00" if abs(d) < .005 else f"{d:+.2f}") if d is not None
                  else "<span class=m>–</span>")
+        first = f"{m}/on" if f"{m}/on" in agg else f"{m}/off"
         rows.append(
-            f"<div class='lrow{' closed' if is_closed(m) else ''}'><div class=lname>{esc(name)}<span>{esc(where)} · {esc(quant)}"
+            f"<div class='lrow{' closed' if is_closed(m) else ''}'><div class=lname>{run_link(first, name)}<span>{esc(where)} · {esc(quant)}"
             f"{' · ' + str(n_runs) + ' run' + ('s' if n_runs > 1 else '') if (n_runs := max(runs_for(s) for s in SETTINGS if s.startswith(m + '/'))) < RUNS else ''}</span></div>"
             f"<div class=ltrack>{''.join(cells)}</div>"
             f"<div class=lval>{'–' if vals.get('off') is None else f'{vals['off']:.2f}'}</div>"
@@ -243,6 +244,13 @@ def scatter(D: dict, W: int = 760, H: int = 380, compact: bool = False) -> str:
                if near0 else ""))
 
 
+def run_link(setting: str, name: str) -> str:
+    """A model name that opens the run explorer on the setting's first run."""
+    m, mode = setting.split("/")
+    return (f"<button type=button class=rlink data-run='{esc(setting)}' "
+            f"title='Show the outputs of {esc(name)}, {MODE_NAME[mode]}'>{esc(name)}</button>")
+
+
 def seq_cell(v: float, text: str, tip: str) -> str:
     p = round(v * 100)
     return (f"<td class='hc{' hi' if v >= .55 else ''}' style='--p:{p}%' tabindex=0 data-tip=\"{esc(tip)}\">"
@@ -264,7 +272,7 @@ def heatmap(D: dict, gold: Gold) -> str:
         cells += seq_cell(a["recall_names"], f"{a['recall_names']:.2f}",
                           f"<b>{esc(name)}, {MODE_NAME[mode]}</b>\nproper names: recall {a['recall_names']:.3f}")
         cls = " ".join(c for c, on in (("part", a["partial"]), ("closed", is_closed(m))) if on)
-        rows.append(f"<tr{f' class={chr(39)}{cls}{chr(39)}' if cls else ''}><th class=rl>{esc(name)} <span class='md {mode}'>"
+        rows.append(f"<tr{f' class={chr(39)}{cls}{chr(39)}' if cls else ''}><th class=rl>{run_link(s, name)} <span class='md {mode}'>"
                     f"{mode}</span></th>{cells}</tr>")
     return ("<div class=wrap><table class=hm><thead><tr><th></th>" + head +
             f"<th>names<span>{sum(i['kind']=='name' for i in gold.items.values())}</span></th></tr></thead><tbody>"
@@ -467,6 +475,9 @@ padding:.22rem .65rem;cursor:pointer}
 .lrow{display:grid;grid-template-columns:minmax(8rem,13rem) 1fr repeat(4,4.2rem);gap:.8rem;align-items:center;
 padding:.35rem 0;border-bottom:1px solid var(--line)}
 .lrow.lhead{border-bottom:0;padding:0 0 .1rem}
+.rlink{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;cursor:pointer;
+text-decoration:underline dotted var(--muted);text-underline-offset:.2em}
+.rlink:hover,.rlink:focus-visible{color:var(--link);text-decoration-style:solid;text-decoration-color:currentColor}
 .lname{font-weight:500;line-height:1.2}.lname span{display:block;font-size:.74rem;color:var(--muted);font-weight:400}
 .ltrack{position:relative;height:22px;background:linear-gradient(var(--track),var(--track)) center/100% 8px no-repeat;border-radius:4px}
 .laxis{position:relative;height:1.1rem}
@@ -704,7 +715,7 @@ var order=[],groups={};RUNS.forEach(function(r,i){if(!groups[r.s]){groups[r.s]=[
 if(typeof ORDER!=='undefined')order=ORDER.filter(function(s){return groups[s];});
 var html='';order.forEach(function(s){var dm=NAMES[s][2]?' closed':'';html+='<div class="cn'+dm+'">'+esc(NAMES[s][0])+' <span class="md '+NAMES[s][1]+'">'+NAMES[s][1]+'</span></div><div class="cs'+dm+'">';
 groups[s].sort(function(a,b){return RUNS[a].seed-RUNS[b].seed;}).forEach(function(i){var r=RUNS[i];
-html+='<button type=button class="chip'+((!r.ok||r.fin==='length')?' bad':'')+'" data-i='+i+'>#'+r.seed+' '+r.f1.toFixed(2)+(r.fo==='cap'||r.fo==='answer'?' ▪':'')+(r.fo==='pending'?' …':'')+'</button>';});html+='</div>';});
+html+='<button type=button class="chip'+((!r.ok||r.fin==='length')?' bad':'')+'" data-i='+i+' data-s="'+esc(r.s)+'">#'+r.seed+' '+r.f1.toFixed(2)+(r.fo==='cap'||r.fo==='answer'?' ▪':'')+(r.fo==='pending'?' …':'')+'</button>';});html+='</div>';});
 box.innerHTML=html;
 var LAB={tp:'in the gold list',derived:'derived word (in brackets in ÚJČ)',near:'one edit from a gold word',misplaced:'gold word under the wrong letter',other:'not a listed word',skip:'not scored (prefix vy-)'};
 var cur=0;
@@ -723,6 +734,10 @@ var L=kv[0].toLowerCase().charAt(0);if(r.miss[L]&&r.miss[L].length)h+='<div clas
 h+='</div><details><summary>raw answer ('+r.raw.length.toLocaleString('en')+' characters shown)</summary><pre>'+esc(r.raw)+'</pre></details>';
 if(r.rsn)h+='<details><summary>reasoning trace ('+r.rsn.toLocaleString('en')+' characters)</summary><pre>'+esc(r.rs)+'</pre></details>';
 view.innerHTML=h;view.scrollTop=0;var cc=box.querySelector('.chip.cur');if(cc&&runsCard&&runsCard.classList.contains('max'))cc.scrollIntoView({block:'nearest'});}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-run]');if(!b)return;
+var c=[].slice.call(box.querySelectorAll('.chip')).filter(function(x){return x.getAttribute('data-s')===b.getAttribute('data-run');})[0];
+if(!c)return;render(+c.getAttribute('data-i'));if(runsCard&&!runsCard.classList.contains('max'))setMax(runsCard,true);
+c.scrollIntoView({block:'nearest'});});
 box.addEventListener('click',function(e){var c=e.target.closest('.chip');if(!c)return;render(+c.getAttribute('data-i'));
 if(runsCard&&!runsCard.classList.contains('max'))setMax(runsCard,true);});
 document.addEventListener('keydown',function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)return;
